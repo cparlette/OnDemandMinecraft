@@ -39,13 +39,13 @@ This step will properly configure your AWS account and configuration.py file so 
 
 	<code>ec2_amis =  ['ami-YourImageIdHere']</code>
 
-7. At this point you should have the necessary configuration to create a new instance through the **createInstance.py** script in the **utilityScripts** folder. Open a command line in the utilityScripts directory of the project, and execute:
+7. At this point you should have the necessary configuration to create a new instance through the **createInstance.py** script in the **root** folder. Open a command line in the utilityScripts directory of the project, and execute:
 
-	<code>pip install -r ./requirements.txt</code>
+	<code>pip install -r requirements.txt</code>
 	
 	After successful installation of dependencies execute:
 
-	<code>python ./utilityScripts/createInstance.py</code>
+	<code>python utilityScripts/createInstance.py</code>
 
 	Copy the **Instance ID** that is output into the terminal. In **configuration.py** of the root directory, set the **INSTANCE_ID** variable to the copied value.
 
@@ -81,19 +81,19 @@ This step will configure the AWS Linux server to run the minecraft server. It wi
 	<code>sudo apt install openjdk-11-jdk-headless</code>
 	If this doesn't work you can use <code>sudo apt list</code> and search through these packages for an alternative java version.
 
-4. Open up an FTP client such as FileZilla and connect to the same address as the same user with the same IP address. Drag all files in **instanceSetup** into the root directory of the current user (probably **ubuntu**, for the purposes of these commands I will be using **ubuntu**, but feel free to replace with your own user if appropriate).
+4. Open up an FTP client such as FileZilla and connect to the same address as the same user with the same IP address. Drag all files from the **instanceSetup** folder from this repository, into the root directory of the current user (probably **ubuntu**, for the purposes of these commands I will be using **ubuntu**, but feel free to replace with your own user if appropriate).
 
 5.  Download the desired Minecraft server version from [https://www.minecraft.net/en-us/download/server/](https://www.minecraft.net/en-us/download/server/), rename it **server.jar** and drag it into the root directory of the user using FileZilla.
 
-6. Using the FTP client, create a new folder in the root directory of the current user called **screens**
-
-7. In the SSH client, create a folder in the current directory with the command:
+6. Using the FTP client, create a new folder in the root directory of the current user called **screens**  
+OR  
+In the SSH client, create a folder in the current directory with the command:
 	<code>sudo mkdir screens</code>
-8. Then execute the following command:
+7. Then execute the following command:
    <code>sudo chmod 700 /home/ubuntu</code>
-9. Then execute the next command:
-  <code>sudo export SCREENDIR=/home/ubuntu/screens</code>
-10. Then execute the command:
+8. Then execute the next command:
+  <code>export SCREENDIR=/home/ubuntu/screens</code>
+9. Then execute the command:
   <code>sudo crontab /home/ubuntu/crontab</code>
 
 	Feel free to close the server through the AWS console or execute the command:
@@ -102,6 +102,9 @@ This step will configure the AWS Linux server to run the minecraft server. It wi
 At this point you may restart the server from the Web Application using the password you configured. You should then be able to play!
 
 # Additional Remarks
+## Minecraft Memory Configuration
+The server startup command does not specify memory constraints by default, but is available to be specified in Configuration.py. In the event that you configure this from an empty string, **the trailing space is required** as in the example below. Traditional minecraft server flags apply for this configuration.
+<code>MEMORY_ALLOCATION='-Xmx1024M -Xms1024M '</code>
 ## UI Configuration
 The title and header for the site can be changed in **/templates/index.html**. Feel free to add any more content or styling to the site, though be careful not to change any form, input, button, or script elements in the template.
 

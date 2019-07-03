@@ -37,7 +37,7 @@ def serverWaitOk(instanceIp, client):
     if checksPassed:
         initServerCommands(instanceIp)
     else:
-        print('An error has occured booting the server')
+        print('An error has occurred booting the server')
     
 #SSH connects to server and executes command to boot minecraft server
 def initServerCommands(instanceIp):
@@ -47,7 +47,7 @@ def initServerCommands(instanceIp):
         sshClient.connect(hostname=instanceIp, username="ubuntu", pkey=key)
 
         # Execute a command(cmd) after connecting/ssh to an instance
-        stdin, stdout, stderr = sshClient.exec_command("screen -dmS minecraft bash -c 'sudo java -Xmx1024M -Xms1024M -jar server.jar nogui'")
+        stdin, stdout, stderr = sshClient.exec_command("screen -dmS minecraft bash -c 'sudo java " + Config.MEMORY_ALLOCATION + "-jar server.jar nogui'")
         print("COMMAND EXECUTED")
         # close the client connection once the job is done
         sshClient.close()
@@ -65,6 +65,8 @@ def initServerMC():
     inputPass = request.form['pass']
     returnData = {}
 
+    message = "Password Incorrect!"
+
     if inputPass == Config.SERVER_PASSWORD:
         #Instantiate server here or return ip address if already running
         client = boto3.client(
@@ -73,17 +75,10 @@ def initServerMC():
             aws_secret_access_key=Config.SECRET_KEY,
             region_name=Config.ec2_region
         )
-
-        ipAddress = manageServer(client)
-        returnData['ip'] = ipAddress
-        returnData['success'] = True
-    else:
-        returnData['success'] = False
+        message = manageServer(client)
     
-    print("\nFINAL RETURN VALUE\n")
-    print(str(returnData))
-    print("\n")
-    return json.dumps(returnData)
+    print(message)
+    return render_template('index.html', ipMessage=message)
 
 
 #Gets IP Address for return to webpage otherwise boots server
@@ -150,3 +145,7 @@ def startServer(client):
     p = Process(target=serverWaitOk, args=(ipAddress, client))
     p.start()
     return returnString
+
+
+if __name__ == "__main__":
+    app.run()
